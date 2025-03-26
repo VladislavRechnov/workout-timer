@@ -1,34 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useMemo, useState } from 'react'
+import Calculator from './features/calculator/Calculator.tsx'
+import ToggleSounds from './features/sounds/ToggleSounds.tsx'
+
+import { Workouts } from './features/calculator/calculator.types.ts'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [allowSound, setAllowSound] = useState(() => {
+    return localStorage.getItem('allowSound') === 'true'
+  })
+  const [currentTime, setCurrentTime] = useState(new Date())
+
+  const formattedTime = useMemo(() => {
+    return new Intl.DateTimeFormat('en', {
+      month: 'short',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    }).format(currentTime)
+  }, [currentTime])
+
+  const partOfDay = useMemo(() => {
+    return formattedTime.slice(-2)
+  }, [formattedTime])
+
+  const workouts: Workouts = useMemo(
+    () => [
+      {
+        name: 'Full-body workout',
+        numExercises: partOfDay === 'AM' ? 9 : 8,
+      },
+      {
+        name: 'Arms + Legs',
+        numExercises: 2,
+      },
+      {
+        name: 'Arms only',
+        numExercises: 3,
+      },
+      {
+        name: 'Legs only',
+        numExercises: 4,
+      },
+      {
+        name: 'Core only',
+        numExercises: partOfDay === 'AM' ? 5 : 4,
+      },
+    ],
+    [partOfDay]
+  )
+
+  useEffect(function () {
+    const id = setInterval(function () {
+      setCurrentTime(new Date())
+    }, 1000)
+
+    return () => clearInterval(id)
+  }, [])
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <main>
+      <h1>Workout timer</h1>
+      <time>For your workout on {formattedTime}</time>
+      <ToggleSounds allowSound={allowSound} setAllowSound={setAllowSound} />
+      <Calculator workouts={workouts} allowSound={allowSound} />
+    </main>
   )
 }
 
