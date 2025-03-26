@@ -6,62 +6,29 @@ export default function CalculatorForm({
   workouts,
 }: CalculatorFormProps) {
   const [formInfo, setFormInfo] = useState<FormInfo>(() => {
-    const storedFormInfo = localStorage.getItem('formInfo')
-    const localFormInfo = storedFormInfo
-      ? (JSON.parse(storedFormInfo) as FormInfo)
-      : null
+    const storedData = localStorage.getItem('formInfo')
+    const parcedData = storedData ? (JSON.parse(storedData) as FormInfo) : null
 
-    if (localFormInfo) {
-      const currentWorkout = workouts.find(
-        (workout) => workout.name === localFormInfo.selectedWorkout.name
-      )
+    const initialWorkout = parcedData?.selectedWorkout
+      ? workouts.find(
+          (workout) => workout.name === parcedData.selectedWorkout.name
+        )
+      : undefined
 
-      localFormInfo.selectedWorkout.numExercises = currentWorkout
-        ? currentWorkout.numExercises
-        : localFormInfo.selectedWorkout.numExercises
+    return {
+      selectedWorkout: initialWorkout || workouts[0],
+      sets: parcedData?.sets || 3,
+      speed: parcedData?.speed || 90,
+      durationBreak: parcedData?.durationBreak || 5,
     }
-
-    return localFormInfo
-      ? localFormInfo
-      : {
-          selectedWorkout: workouts[0],
-          sets: 3,
-          speed: 90,
-          durationBreak: 5,
-        }
   })
 
   const {
-    selectedWorkout: { numExercises, name },
+    selectedWorkout: { numExercises = 0, name },
     sets,
     speed,
     durationBreak,
   } = formInfo
-
-  function handleFormInfoChange(
-    e: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
-  ) {
-    setFormInfo((formInfo) => {
-      if (e.target.name === 'selectedWorkout') {
-        const currentWorkout = workouts.find(
-          (workout) => workout.name === e.target.value
-        )
-
-        return {
-          ...formInfo,
-          selectedWorkout: {
-            name: currentWorkout ? currentWorkout.name : '<>',
-            numExercises: currentWorkout ? +currentWorkout.numExercises : 0,
-          },
-        }
-      }
-
-      return {
-        ...formInfo,
-        [e.target.name]: +e.target.value,
-      }
-    })
-  }
 
   useEffect(() => {
     setDuration(numExercises * sets * speed + durationBreak * 60)
@@ -71,11 +38,41 @@ export default function CalculatorForm({
     localStorage.setItem('formInfo', JSON.stringify(formInfo))
   }, [formInfo])
 
+  function handleFormChange(
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) {
+    const { name, value } = e.target
+
+    setFormInfo((formInfoPrev) => {
+      if (name === 'selectedWorkout') {
+        const currentWorkout = workouts.find(
+          (workout) => workout.name === value
+        )
+
+        return {
+          ...formInfoPrev,
+          selectedWorkout: currentWorkout || formInfoPrev.selectedWorkout,
+        }
+      }
+
+      return {
+        ...formInfoPrev,
+        [name]: Number(value),
+      }
+    })
+  }
+
+  if (!workouts.length) return <div>No workouts available</div>
+
   return (
     <form>
       <div>
         <label>Type of workout</label>
-        <select name="selectedWorkout" onChange={handleFormInfoChange}>
+        <select
+          name="selectedWorkout"
+          onChange={handleFormChange}
+          value={formInfo.selectedWorkout.name}
+        >
           {workouts.map((workout) => (
             <option value={workout.name} key={workout.name}>
               {workout.name} ({workout.numExercises} exercises)
@@ -91,7 +88,7 @@ export default function CalculatorForm({
           max="5"
           name="sets"
           value={sets}
-          onChange={handleFormInfoChange}
+          onChange={handleFormChange}
         />
         <span>{sets}</span>
       </div>
@@ -104,7 +101,7 @@ export default function CalculatorForm({
           step="30"
           name="speed"
           value={speed}
-          onChange={handleFormInfoChange}
+          onChange={handleFormChange}
         />
         <span>{speed} sec/exercise</span>
       </div>
@@ -116,7 +113,7 @@ export default function CalculatorForm({
           max="10"
           name="durationBreak"
           value={durationBreak}
-          onChange={handleFormInfoChange}
+          onChange={handleFormChange}
         />
         <span>{durationBreak} minutes/break</span>
       </div>
