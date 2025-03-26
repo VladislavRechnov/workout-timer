@@ -20,10 +20,17 @@ export default function CalculatorTimer({
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setDuration((duration) => duration - 1)
+      setDuration((duration) => {
+        if (duration <= 0) {
+          clearInterval(timer)
+          return 0
+        }
+
+        return duration - 1
+      })
     }, 1000)
 
-    if (!isTimerActive || duration === 0) {
+    if (!isTimerActive || duration <= 0) {
       clearInterval(timer)
     }
 
@@ -55,6 +62,7 @@ export default function CalculatorTimer({
       </section>
       <button
         className="timer-button"
+        disabled={duration === 0}
         onClick={() => setIsTimerActive((isTimerActive) => !isTimerActive)}
       >
         {isTimerActive ? 'END' : 'START'}
