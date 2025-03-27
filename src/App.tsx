@@ -55,7 +55,9 @@ function App() {
       setCurrentTime(new Date())
     }, 1000)
 
-    return () => clearInterval(id)
+    return () => {
+      clearInterval(id)
+    }
   }, [])
 
   return (

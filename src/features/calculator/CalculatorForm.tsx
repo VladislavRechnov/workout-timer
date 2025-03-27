@@ -16,10 +16,10 @@ export default function CalculatorForm({
       : undefined
 
     return {
-      selectedWorkout: initialWorkout || workouts[0],
-      sets: parcedData?.sets || 3,
-      speed: parcedData?.speed || 90,
-      durationBreak: parcedData?.durationBreak || 5,
+      selectedWorkout: initialWorkout ?? workouts[0],
+      sets: parcedData?.sets ?? 3,
+      speed: parcedData?.speed ?? 90,
+      durationBreak: parcedData?.durationBreak ?? 5,
     }
   })
 
@@ -51,7 +51,7 @@ export default function CalculatorForm({
 
         return {
           ...formInfoPrev,
-          selectedWorkout: currentWorkout || formInfoPrev.selectedWorkout,
+          selectedWorkout: currentWorkout ?? formInfoPrev.selectedWorkout,
         }
       }
 

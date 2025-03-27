@@ -44,7 +44,11 @@ export default function CalculatorTimer({
       <section>
         {duration > 0 ? (
           <>
-            <button className="control-button" onClick={handleDec}>
+            <button
+              type="button"
+              className="control-button"
+              onClick={handleDec}
+            >
               –
             </button>
             <p>
@@ -52,7 +56,11 @@ export default function CalculatorTimer({
               {mins}:{seconds < 10 && '0'}
               {seconds}
             </p>
-            <button className="control-button" onClick={handleInc}>
+            <button
+              type="button"
+              className="control-button"
+              onClick={handleInc}
+            >
               +
             </button>
           </>
@@ -61,9 +69,12 @@ export default function CalculatorTimer({
         )}
       </section>
       <button
+        type="button"
         className="timer-button"
         disabled={duration === 0}
-        onClick={() => setIsTimerActive((isTimerActive) => !isTimerActive)}
+        onClick={() => {
+          setIsTimerActive((isTimerActive) => !isTimerActive)
+        }}
       >
         {isTimerActive ? 'END' : 'START'}
       </button>

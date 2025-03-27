@@ -11,7 +11,7 @@ function ToggleSounds({ allowSound, setAllowSound }: ToggleSoundsProps) {
   }
 
   return (
-    <button className="btn-sound" onClick={handleClick}>
+    <button type="button" className="btn-sound" onClick={handleClick}>
       {allowSound ? '🔈' : '🔇'}
     </button>
   )

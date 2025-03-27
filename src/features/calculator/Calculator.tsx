@@ -15,7 +15,9 @@ function Calculator({ workouts, allowSound }: CalculatorProps) {
       setUserInteracted(true)
     }
     document.addEventListener('click', handleUserInteraction, { once: true })
-    return () => document.removeEventListener('click', handleUserInteraction)
+    return () => {
+      document.removeEventListener('click', handleUserInteraction)
+    }
   }, [])
 
   useEffect(() => {
@@ -28,7 +30,7 @@ function Calculator({ workouts, allowSound }: CalculatorProps) {
       }
     }
 
-    playSound()
+    void playSound()
   }, [allowSound, duration, audio, userInteracted, isTimerActive])
 
   return (
