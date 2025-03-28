@@ -1,5 +1,5 @@
 import { useEffect, useState, memo } from 'react'
-import clickSound from '../sounds/ClickSound.m4a'
+import clickSound from '../../assets/audio/ClickSound.m4a'
 import CalculatorForm from './CalculatorForm'
 import CalculatorTimer from './CalculatorTimer'
 import { CalculatorProps } from './calculator.types'

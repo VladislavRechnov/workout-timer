@@ -1,6 +1,9 @@
 import { memo } from 'react'
 import { ToggleSoundsProps } from './sounds.types'
 
+import unmute from '../../assets/icons/unmute .png'
+import mute from '../../assets/icons/mute.png'
+
 function ToggleSounds({ allowSound, setAllowSound }: ToggleSoundsProps) {
   function handleClick() {
     setAllowSound((allow) => {
@@ -12,7 +15,11 @@ function ToggleSounds({ allowSound, setAllowSound }: ToggleSoundsProps) {
 
   return (
     <button type="button" className="btn-sound" onClick={handleClick}>
-      {allowSound ? '🔈' : '🔇'}
+      {allowSound ? (
+        <img src={unmute} alt="unmute" />
+      ) : (
+        <img src={mute} alt="mute" />
+      )}
     </button>
   )
 }
